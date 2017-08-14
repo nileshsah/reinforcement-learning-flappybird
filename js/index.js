@@ -113,6 +113,8 @@ function handleUserInteraction(event){
 function renderHome(){
     renderContext.clearRect(0,0,32,32);
     updateBirdHome();
+    renderGround(true);
+    drawSpriteSheetImage(renderContext, bgLoc, 0, 0);
     renderToScale();
 }
 
@@ -120,9 +122,11 @@ function renderGame(){
     renderContext.clearRect(0,0,32,32);
     collisionContext.clearRect(0,0,collisionCanvas.width, collisionCanvas.height);
     renderScore(score, renderScoreXGame, 1);
+    renderGround(true);
     renderTubes();
     updateBirdGame();
     checkCollision();
+    drawSpriteSheetImage(renderContext, bgLoc, 0, 0);
     renderToScale();
 }
 
@@ -197,7 +201,7 @@ function renderGround(move){
 }
 
 function updateBirdHome(){
-    drawSpriteSheetImage(renderContext, birdLocs[0], birdX, birdY);
+    drawSpriteSheetImage(renderContext, birdLocs[birdFrame], birdX, birdY);
     birdFrame++;
     birdFrame %= 3;
 }
@@ -210,7 +214,7 @@ function updateBirdGame(){
         birdY = 0;
         birdYSpeed = 0;
     }
-    if(birdY + 3 > bgLoc.height){
+    if(birdY + 5 > bgLoc.height){
         birdY = 28;
         birdYSpeed = 0;
     }
@@ -218,8 +222,8 @@ function updateBirdGame(){
     collisionContext.save();
     renderContext.translate(birdX, birdY);
     collisionContext.translate(birdX, birdY);
-    drawSpriteSheetImage(renderContext, birdLocs[0], 0, 0);
-    drawSpriteSheetImage(collisionContext, birdLocs[0], 0, 0);
+    drawSpriteSheetImage(renderContext, birdLocs[birdFrame], 0, 0);
+    drawSpriteSheetImage(collisionContext, birdLocs[birdFrame], 0, 0);
     renderContext.restore();
     collisionContext.restore();
     birdFrame++;
@@ -242,6 +246,6 @@ function renderTubes(){
 
 function setTubeY(tube){
     // Sets the y-coordinate for tubes depending upon if the given environment should be deterministic or stochastic
-    tube.y = Math.floor( 0.639 * (bgLoc.height - tubeLoc.height) );
-    //tube.y = Math.floor( Math.random() * (bgLoc.height - tubeLoc.height) );
+    //tube.y = Math.floor( 0.639 * (bgLoc.height - tubeLoc.height) );
+    tube.y = Math.floor( Math.random() * (bgLoc.height - tubeLoc.height) );
 }

@@ -19,6 +19,30 @@
  */
 var Q_table = {};
 
+var getJSON = function(url) {
+  return new Promise(function(resolve, reject) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('get', url, true);
+    xhr.responseType = 'json';
+    xhr.onload = function() {
+      var status = xhr.status;
+      if (status == 200) {
+        resolve(xhr.response);
+      } else {
+        reject(status);
+      }
+    };
+    xhr.send();
+  });
+};
+
+getJSON('http://localhost:8888/flappy-bird/data3.json').then(function(data) {
+    alert('Your Json result is:  ' + data);
+    Q_table = eval(data);
+}, function(status) {
+  alert('Something went wrong.');
+});
+
 /** 
  * The action set comprises of:
  * (1) Stay: Take no action, and just go with the flow of the gravity
@@ -81,10 +105,10 @@ function setQ(state, action, reward) {
  * @param {*} state 
  */
 function getAction(state) {
-  // Why always follow the rules? Once in a while (1/10000), our flappy bird takes a random decision
+  // Why always follow the rules? Once in a while (1/100000), our flappy bird takes a random decision
   // without looking up the Q-table to explore a new possibility. This is to help the flappy bird to not 
   // get stuck on a single path.
-  var takeRandomDecision = Math.ceil(Math.random() * 10000)%9001;
+  var takeRandomDecision = Math.ceil(Math.random() * 100000)%90001;
   if (takeRandomDecision == 0) {
     console.log("Going random baby!");
     // 1 out of 4 times, it'll take a decision to jump
