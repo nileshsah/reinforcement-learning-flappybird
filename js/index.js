@@ -15,6 +15,8 @@ var readyStateCheckInterval = setInterval( function() {
     }
 }, 100);
 
+var eventLoop;
+
 var bgLoc = {x:0, y:0, width:32, height:32};
 var groundLoc = {x:0, y:31, width:35, height:1};
 var instructionsLoc = {x:6, y:49, width:17, height:21};
@@ -65,7 +67,7 @@ function initGame(){
     collisionContext.globalCompositeOperation = "xor";
     startGame();
     // Set the speed of the game
-    setInterval(loop, 10);
+    eventLoop = setInterval(loop, 40);
 }
 
 function startGame(){
@@ -80,17 +82,21 @@ function startGame(){
 
 function loop(){
     switch(gameState){
-        case HOME: renderHome();
+        case HOME: 
+            renderHome();
             break;
-        case GAME : renderGame();
+        case GAME : 
             nextStep();
+            renderGame();
             break;
-        case GAME_OVER: renderGameOver();
+        case GAME_OVER: 
+            renderGameOver();
             // We'll keep looping over the game to train our flappy bird
             startGame();
             gameState = GAME
             break;
-        case HI_SCORE : renderHiScore();
+        case HI_SCORE : 
+            renderHiScore();
             break;
     }
     
@@ -112,6 +118,7 @@ function handleUserInteraction(event){
 
 function renderHome(){
     renderContext.clearRect(0,0,32,32);
+    drawSpriteSheetImage(renderContext, instructionsLoc, 32 - instructionsLoc.width - 1, 1);
     updateBirdHome();
     renderGround(true);
     drawSpriteSheetImage(renderContext, bgLoc, 0, 0);
@@ -126,6 +133,10 @@ function renderGame(){
     renderTubes();
     updateBirdGame();
     checkCollision();
+    if (displayTarget) {
+        renderContext.fillStyle = "#F00";
+        renderContext.fillRect(targetTube.x + 3, (targetTube.y+17+6), 1, 1);
+    }
     drawSpriteSheetImage(renderContext, bgLoc, 0, 0);
     renderToScale();
 }
@@ -183,6 +194,10 @@ function renderScore(score, xFunction, y){
         scoreLoc.y = scoreLocs[index + 1];
         drawSpriteSheetImage(renderContext, scoreLoc, xFunction(i, length), y);
     }
+    var curMaxScore = Math.max(parseInt(document.getElementById("score").innerText), parseInt(score));
+    document.getElementById("score").innerText = curMaxScore.toString();
+    document.getElementById("rules").innerText = Object.keys(Q_table).length;
+    document.getElementById("trials").innerText = trials;
 }
 
 function renderScoreXGame(index, total){
@@ -246,6 +261,9 @@ function renderTubes(){
 
 function setTubeY(tube){
     // Sets the y-coordinate for tubes depending upon if the given environment should be deterministic or stochastic
-    //tube.y = Math.floor( 0.639 * (bgLoc.height - tubeLoc.height) );
-    tube.y = Math.floor( Math.random() * (bgLoc.height - tubeLoc.height) );
+    if (isEnvironmentStatic) {
+        tube.y = Math.floor(0.639 * (bgLoc.height - tubeLoc.height));
+    } else {
+        tube.y = Math.floor(Math.random() * (bgLoc.height - tubeLoc.height + 2));
+    }
 }

@@ -1,10 +1,99 @@
-html, body{
-  margin : 0px;
-  width : 100%;
-  height : 100%;
-  overflow: hidden;
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300);
+
+* {
+  font-family: 'Open Sans', sans-serif;
 }
 
-#gameCanvas{
-  position: absolute;
+html, body {
+  margin : 0px;
+  height : 100%;
+  padding: 30px; 
+  background: #eee;
+}
+
+#wrapper {
+  padding: 10px;
+}
+
+#content {
+  float: left;
+  background-color: #CCF;
+}
+#sidebar {
+  float: right;
+  width: 50%;
+  padding: 30px;
+  background-color: #CCF;
+}
+#cleared {
+  clear: both;
+}
+
+html{
+  font-size: 62.5%;
+}
+
+h1{
+  font-size: 3rem;
+}
+h2{
+  font-size: 1.6rem;
+}
+form{
+  font-size: 1.4rem; 
+  color: #222;
+}
+
+form .field-group{
+  display: flex; 
+  margin: 0 0 12px 0;
+}
+form .field-group .label{
+  flex: 1; 
+  text-align: right; 
+  margin: 0 8px 0 0;
+  padding: 2px 0;
+}
+form .field-group .field{
+  flex: 3;
+}
+form .field-group:last-child{
+  display: flex;
+  justify-content: flex-end;
+}
+form .field-group:last-child .field{
+  max-width: 80%;
+}
+input, select, textarea{
+  padding: .6rem 1rem; 
+  font-size: 1.6rem; 
+  border: solid 1px #eee;
+  background: #fff; 
+  box-sizing: border-box;
+}
+textarea {
+  width: 100%;  
+}
+input, select{
+  width: 50%;
+}
+input[type="radio"],
+input[type="checkbox"],
+input[type="submit"] {
+  width: auto;
+}
+
+input[type="button"] {
+  width: 250px;
+}
+
+.number {
+  display: inline;
+  margin-right: 5px;
+  font-size: 80%;
+  background-color: rgb(0,200,200);
+  color: white;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 3px;
 }

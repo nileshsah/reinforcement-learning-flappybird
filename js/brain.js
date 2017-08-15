@@ -19,30 +19,6 @@
  */
 var Q_table = {};
 
-var getJSON = function(url) {
-  return new Promise(function(resolve, reject) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('get', url, true);
-    xhr.responseType = 'json';
-    xhr.onload = function() {
-      var status = xhr.status;
-      if (status == 200) {
-        resolve(xhr.response);
-      } else {
-        reject(status);
-      }
-    };
-    xhr.send();
-  });
-};
-
-getJSON('http://localhost:8888/flappy-bird/data3.json').then(function(data) {
-    alert('Your Json result is:  ' + data);
-    Q_table = eval(data);
-}, function(status) {
-  alert('Something went wrong.');
-});
-
 /** 
  * The action set comprises of:
  * (1) Stay: Take no action, and just go with the flow of the gravity
@@ -70,6 +46,12 @@ var episodeFrameCount = 0;
 // Flag to determine if the current episode is still ongoing or is completed by maintaing a index to the next
 // incoming tube
 var targetTubeIndex;
+
+// The tube which the bird must clear next
+var targetTube;
+
+// To maintain the count on the number of trials
+var trials = 0;
 
 /**
  * Function to lookup the estimated Q-value (reward) in the Q-table for a given state-action pair
@@ -159,7 +141,7 @@ function rewardTheBird(reward, wasSuccessful) {
   // Minumun number of frames to be maintained in the frame buffer for the episode (for maintaining the state-action sequecne tail)
   var minFramSize = 5;
   // Tolerable deviation from the ideal passage position between the tubes in px
-  var theta = 2;
+  var theta = 1;
   
   var frameSize = Math.max(minFramSize, episodeFrameCount);
     
@@ -170,18 +152,18 @@ function rewardTheBird(reward, wasSuccessful) {
     var action = config.action;
     
     // The reward for the state is influenced by how close the flappy bird was from the ideal passage position
-    var rewardForState = reward - Math.abs(state.diffY);
+    var rewardForState = (reward - Math.abs(state.diffY));
     
     // Determine if the reward for given state-action pair should be positive or negative
     if (!wasSuccessful) {
-      if( state.diffY >= theta && action == actionSet.JUMP ) {
+      if (state.diffY >= theta && action == actionSet.JUMP) {
         // If the bird was above the ideal passage position and it still decided to jump, reward negatively
-        rewardForState = -reward;
-      } else if( state.diffY <= -theta && !action ) {
+        rewardForState = -rewardForState;
+      } else if(state.diffY <= -theta && action == actionSet.STAY) {
         // If the bird was below the ideal passage position and it still decided to not jump (stay), reward negatively
-        rewardForState = -reward;
+        rewardForState = -rewardForState;
       } else {
-        // The bird took the right decision, so award it slightly more
+        // The bird took the right decision, so don't award it negatively
         rewardForState = +0.5;
       }
     }
@@ -207,11 +189,12 @@ function rewardTheBird(reward, wasSuccessful) {
 function triggerGameOver() {
   var reward =  100;
   rewardTheBird(reward, false);
-  console.log( "GameOver:", score, Object.keys(Q_table).length );
-  
+  console.log( "GameOver:", score, Object.keys(Q_table).length, trials );
+
   // Reset the episode flag
   targetTubeIndex = -1;
   episodeFrameCount = 0;
+  trials++;
 }
 
 /**
@@ -223,17 +206,14 @@ function nextStep() {
   if (gameState != GAME)
    return;
   
-  // The tube which the bird must clear next
-  var targetTube;
-  
   // Logic to determine if the Flappy Bird successfully surpassed the tube
   // The changing of the targetTubeIndex denotes the completion of an episode
-  if (birdX < tubes[0].x+3 && (tubes[0].x < tubes[1].x || tubes[1].x+3 < birdX)) {
+  if (birdX < tubes[0].x + 3 && (tubes[0].x < tubes[1].x || tubes[1].x + 3 < birdX)) {
     targetTube = tubes[0];
     if (targetTubeIndex == 1) {
       // The target tube changed from [1] to [0], which means the tube[1] was crossed successfully
       // Hence reward the bird positively 
-      rewardTheBird(4, true);
+      rewardTheBird(5, true);
     }
     targetTubeIndex = 0;
   } else  {
@@ -241,11 +221,15 @@ function nextStep() {
     if (targetTubeIndex == 0) {
       // The target tube changed from index [0] to [1], which means the tube[0] was crossed successfully
       // Hence reward the bird positively
-      rewardTheBird(4, true);
+      rewardTheBird(5, true);
     }
     targetTubeIndex = 1;
   }
-  
+
+  renderContext.fillStyle = "#F00";
+  renderContext.fillRect(targetTube.x + 3, (targetTube.y+17+6), 1, 1);
+  renderToScale();
+
   // We'll take no action if the  tube is too far from the bird
   if (targetTube.x - birdX > 28) {
     return;
@@ -255,12 +239,12 @@ function nextStep() {
   var state = {
     speedY: Math.round(birdYSpeed * 100),
     tubeX: targetTube.x,
-    diffY: (targetTube.y+17+9) - (birdY+1)
+    diffY: (targetTube.y+17+6) - (birdY+1)
   };
   
   // Query the Q-table to determine the appropriate action to be taken for the current state
   var actionToBeTaken = getAction(state);
-  
+
   // Push the state-action pair to the frame buffer so what we can determine the reward for it later on
   var config = {
     env: state,

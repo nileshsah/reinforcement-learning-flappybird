@@ -6,8 +6,92 @@
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
-    <canvas id="gameCanvas" width="32" height="32"  />
+    <div id="wrapper">
+      <div id="content">
+        <canvas id="gameCanvas" width="32" height="32"  />-->
+      </div> 
+      <div id="sidebar">
+        <header>
+          <h1>Configurations</h1> 
+        </header>
+        <form action="#">  
+
+          <div class="field-group">
+            <label class="label">High Score:</label>         
+            <div class="field">
+              <span id="score" class="number">0</span>
+            </div>
+          </div>  
+          <div class="field-group">
+            <label class="label">Rules Learnt:</label>         
+            <div class="field">
+               <span id="rules" class="number">0</span>
+            </div>
+          </div>
+          <div class="field-group">
+            <label class="label">Trials:</label>         
+            <div class="field">
+               <span id="trials" class="number">0</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="game-speed" class="label">Game speed:</label>         
+            <div class="field">
+              <input name="tel1" id="tel1" type="range" value="40" onchange="gameSpeedChange(this.value)">
+            </div>
+          </div>
+
+          <!--///////////////// SELECT MENU ///////////////////-->
+          <div class="field-group">
+            <div class="label">Environment:</div>
+            <div class="field">        
+              <select id="env" onchange="environmentChange(this.value)"> 
+                <option value="Static">Static</option>
+                <option value="Random">Random</option>
+              </select>
+            </div> 
+          </div>
+
+          <div class="field-group">
+            <div class="label">Display Target:</div>
+
+            <div class="field">
+              <div>
+                <input id="showTargetYes" name="radio" type="radio" value="Yes" onchange="toggleDisplayTarget(this.value)">
+                <label for="showTargetYes">Yes</label>
+              </div>
+              <div>     
+                <input id="showTargetNo" name="radio" type="radio" value="No" checked onchange="toggleDisplayTarget(this.value)"> 
+                <label for="showTargetNo">No</label>
+              </div>
+            </div>
+
+          </div>
+ 
+          <div class="field-group">
+            <div class="label">Actions:</div>
+            <div class="field">
+              <input type="button" value="Save model to local storage" onclick="saveModel()">
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="label"></div>
+
+            <div class="field">
+              <input type="button" value="Load model from local storage" onclick="loadModel()">
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="label"></div>
+            <div class="field">
+              <input type="button" value="Load pre-trained model" onclick="loadPreModel()">
+            </div>
+          </div>
+        </form>  
+    </div>
     <script src="js/index.js"></script>
     <script src="js/brain.js"></script>
+    <script src="js/config.js"></script>
   </body>
 </html>
