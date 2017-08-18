@@ -1,3 +1,9 @@
+/**
+ * The script just contains handlers for making the game configurable. Nothing of much interest here ^__^
+ * 
+ * Author @nellex
+ */
+
 var isEnvironmentStatic = true;
 var displayTarget = false;
 
