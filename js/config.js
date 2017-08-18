@@ -60,10 +60,12 @@ var getJSON = function(url) {
 };
 
 function loadPreModel() {
-    getJSON(window.location.href + "/model/qtable-x3-y6.json").then(function(data) {
+    var href = window.location.href;
+    var host = href.substring(0, href.lastIndexOf('/'));
+    getJSON(host + "/model/qtable-x3-y6.json").then(function(data) {
         Q_table = eval(data);
         alert("Model loaded successfully!");
     }, function(status) {
-    alert(window.location.href);
+    alert("Failure in loading pre-trained model");
     });
 }
