@@ -28,8 +28,12 @@ function saveModel() {
 }
 
 function loadModel() {
-    Q_table = JSON.parse(window.localStorage.getItem("flappybird-qtable"));
-    alert("Model was loaded successfully!");
+    if (window.localStorage.getItem("flappybird-qtable") != null) {
+        Q_table = JSON.parse(window.localStorage.getItem("flappybird-qtable"));
+        alert("Model was loaded successfully!");
+    } else {
+        alert("No saved model found in local storage");
+    }
 }
 
 var getJSON = function(url) {
