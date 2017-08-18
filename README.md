@@ -9,8 +9,15 @@ The script ![`js/brain.js`](js/brain.js) is where the learning logic resides and
 
 With everything written solely in JS gives us the liberty to train and test the game in our browser itself which is made accessible here: http://nileshsah.github.io/reinforcement-learning-flappybird/
 
-In an ideal scenario, the bird learns to operate upon a static non-changing environment in mere 25 trials of the game while for a randomized environment it might take up 1000+ trials.
+In an ideal scenario, the bird learns to operate upon a static non-changing environment in mere 25 trials of the game while for a randomized environment it might take up to 1000+ trials.
 
+### Further Reading
+
+http://people.revoledu.com/kardi/tutorial/ReinforcementLearning/
+
+https://medium.com/emergent-future/simple-reinforcement-learning-with-tensorflow-part-0-q-learning-with-tables-and-neural-networks-d195264329d0
+
+https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf
 
 
 
